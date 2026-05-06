@@ -1,0 +1,44 @@
+---
+description: Wex Agent Electron project onboarding and development conventions
+alwaysApply: true
+---
+
+# Wex Agent Electron Onboarding
+
+## 项目概述
+
+wex-agent-electron 是 wex-agent 的 Electron 桌面版，用 React + Vite 提供图形界面，Agent 核心仍运行在 Electron main process 中，复用 agentic loop、DeepSeek 流式调用和工具调用体系。
+
+## 技术栈
+
+- 语言：TypeScript（ES2022，ESM 模块，strict）
+- 桌面端：Electron + electron-vite
+- 前端：React 19 + Vite
+- 运行时：Node.js / Electron main、preload、renderer 三端分层
+- 包管理：pnpm
+- AI API：DeepSeek（通过 OpenAI SDK 兼容调用，环境变量 `DEEPSEEK_API_KEY`）
+- 参数校验：Zod
+
+## 项目结构
+
+- `electron/main.ts`：Electron 主进程、窗口创建、IPC handler、agent loop 启动
+- `electron/preload.ts`：通过 `contextBridge` 暴露安全的 renderer API
+- `src/renderer/`：React UI、样式和用户交互
+- `src/shared/ipc.ts`：main / preload / renderer 共享 IPC 类型
+- `src/agent/`：Agent 核心、System Prompt、API 调用、工具注册和工具实现
+- `docs/diary.md`：项目开发日志，记录代码变更摘要
+
+## 开发命令
+
+- `pnpm dev`：启动 Electron 开发环境
+- `pnpm build`：类型检查并构建 Electron 应用
+- `pnpm preview`：预览构建产物
+- `pnpm typecheck`：仅运行 TypeScript 类型检查
+
+## 修改代码时的注意事项
+
+- 修改代码前先阅读相关文件，保持最小、聚焦的改动。
+- 保持 ESM 风格；跨目录导入运行时代码时使用现有 `.js` 后缀约定。
+- main / preload / renderer 的边界要清晰：renderer 不直接使用 Node/Electron 能力，新增能力优先通过 `src/shared/ipc.ts` 定义类型并经 preload 暴露。
+- Agent 工具输入继续使用 Zod schema，新增工具需在 `src/agent/tools/index.ts` 注册。
+- 有实际代码或配置变更时，将简短中文摘要记录到 `docs/diary.md`。
