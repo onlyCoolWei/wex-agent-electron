@@ -1,0 +1,125 @@
+/* 基础色板 - Light 模式 */
+/* 该文件定义浅色模式下的纯颜色值，不带任何语义，仅在定义语义色时使用 */
+
+:root {
+  /* ========================================
+     主题色 (Brand Colors)
+     ======================================== */
+  --color-brand-12: #f3f7ff;
+  --color-brand-11: #e6eefe;
+  --color-brand-10: #dae6fe;
+  --color-brand-9: #cedefd;
+  --color-brand-8: #b5cdfd;
+  --color-brand-7: #9dbdfc;
+  --color-brand-6: #84acfb;
+  --color-brand-5: #6c9bfa;
+  --color-brand-4: #548bf9;
+  --color-brand-3: #3b7af9;
+  --color-brand-2: #236af8;
+  --color-brand-1: #0a59f7;
+
+  /* ========================================
+     功能色 - Red (Error)
+     ======================================== */
+  --color-red-12: #fef5f4;
+  --color-red-11: #fdece9;
+  --color-red-10: #fce2de;
+  --color-red-9: #fad9d4;
+  --color-red-8: #f8c6be;
+  --color-red-7: #f6b3a8;
+  --color-red-6: #f39f92;
+  --color-red-5: #f18c7d;
+  --color-red-4: #ef7967;
+  --color-red-3: #ed6651;
+  --color-red-2: #ea533c;
+  --color-red-1: #e84026;
+
+  /* ========================================
+     功能色 - Orange (Warning)
+     ======================================== */
+  --color-orange-12: #fef8f4;
+  --color-orange-11: #fdf1e9;
+  --color-orange-10: #fce9de;
+  --color-orange-9: #fbe2d3;
+  --color-orange-8: #fad4bc;
+  --color-orange-7: #f8c5a6;
+  --color-orange-6: #f6b790;
+  --color-orange-5: #f4a97a;
+  --color-orange-4: #f29a64;
+  --color-orange-3: #f18c4d;
+  --color-orange-2: #ef7d37;
+  --color-orange-1: #ed6f21;
+
+  /* ========================================
+     功能色 - Green (Success)
+     ======================================== */
+  --color-green-12: #f7fcf7;
+  --color-green-11: #eff8ef;
+  --color-green-10: #e9f5e7;
+  --color-green-9: #e0f1de;
+  --color-green-8: #d0ebce;
+  --color-green-7: #c1e4be;
+  --color-green-6: #b1ddad;
+  --color-green-5: #a2d69d;
+  --color-green-4: #93cf8d;
+  --color-green-3: #83c87d;
+  --color-green-2: #74c26c;
+  --color-green-1: #64bb5c;
+
+  /* ========================================
+     功能色 - Purple
+     ======================================== */
+  --color-purple-12: #f9f5ff;
+  --color-purple-11: #f3ebff;
+  --color-purple-10: #eee2ff;
+  --color-purple-9: #e8d8ff;
+  --color-purple-8: #ddc4ff;
+  --color-purple-7: #d1b1ff;
+  --color-purple-6: #c59dff;
+  --color-purple-5: #ba89fe;
+  --color-purple-4: #af76fe;
+  --color-purple-3: #a362fe;
+  --color-purple-2: #974ffe;
+  --color-purple-1: #8c3bfe;
+
+  /* ========================================
+     功能色 - Cyan
+     ======================================== */
+  --color-cyan-12: #f2fbfb;
+  --color-cyan-11: #e5f6f7;
+  --color-cyan-10: #d9f2f3;
+  --color-cyan-9: #ccedef;
+  --color-cyan-8: #b2e5e6;
+  --color-cyan-7: #99dcde;
+  --color-cyan-6: #80d3d6;
+  --color-cyan-5: #66cace;
+  --color-cyan-4: #4dc2c6;
+  --color-cyan-3: #33b9bd;
+  --color-cyan-2: #1ab0b5;
+  --color-cyan-1: #00a7ad;
+
+  /* ========================================
+     中性色 (Neutral Colors)
+     ======================================== */
+  --color-white-1: #ffffff;
+
+  --color-gray-1: #eef0f3;
+  --color-gray-2: #e9ebee;
+  --color-gray-3: #e3e4e7;
+  --color-gray-4: #d8d9dd;
+  --color-gray-5: #c1c3c6;
+  --color-gray-6: #a3a4a8;
+  --color-gray-7: #888a8d;
+  --color-gray-8: #75767a;
+  --color-gray-9: #5e6063;
+  --color-gray-10: #434448;
+  --color-gray-11: #292b2e;
+  --color-gray-12: #191a1d;
+  --color-gray-13: #111216;
+  --color-gray-14: #090b0e;
+
+  /* ========================================
+     纯黑色 (用于文字/图标透明度计算)
+     ======================================== */
+  --color-black: #000000;
+}

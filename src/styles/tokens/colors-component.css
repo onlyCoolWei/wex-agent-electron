@@ -1,0 +1,24 @@
+/* 组件色：可选 */
+/* 按需基于语义色定义 */
+
+/* ========================================
+   Scrollbar Tokens - Light/Dark
+   ======================================== */
+
+:root {
+  --scrollbar-size: 8px;
+  --scrollbar-radius: 999px;
+  --scrollbar-thumb-border: 2px;
+
+  --scrollbar-track: transparent;
+  --scrollbar-thumb: var(--color-gray-6);
+  --scrollbar-thumb-hover: var(--color-gray-7);
+  --scrollbar-thumb-active: var(--color-gray-8);
+}
+
+.dark {
+  --scrollbar-track: transparent;
+  --scrollbar-thumb: var(--color-gray-10);
+  --scrollbar-thumb-hover: var(--color-gray-9);
+  --scrollbar-thumb-active: var(--color-gray-8);
+}

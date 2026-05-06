@@ -1,4 +1,13 @@
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { Moon, Sun } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { useTheme } from '@/components/theme-context';
+import { cn } from '@/lib/utils';
 import type { AgentEvent } from '../shared/ipc';
 
 type ChatItem = {
@@ -18,6 +27,7 @@ function formatToolInput(input: Record<string, unknown>) {
 }
 
 export function App() {
+  const { theme, setTheme } = useTheme();
   const [prompt, setPrompt] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [model, setModel] = useState('deepseek-chat');
@@ -168,68 +178,89 @@ export function App() {
     ]);
   }
 
+  function handleToggleTheme() {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  }
+
   return (
     <main className="shell">
-      <section className="sidebar">
-        <div>
-          <p className="eyebrow">Desktop Agent</p>
-          <h1>Wex Agent Electron</h1>
-          <p className="lede">React + Vite + Electron shell around the original wex-agent loop.</p>
+      <Card className="sidebar">
+        <div className="hero">
+          <div>
+            <p className="eyebrow">Desktop Agent</p>
+            <h1>Wex Agent Electron</h1>
+            <p className="lede">React + Vite + Electron shell around the original wex-agent loop.</p>
+          </div>
+          <Button
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            className="theme-toggle"
+            size="icon"
+            type="button"
+            variant="outline"
+            onClick={handleToggleTheme}
+          >
+            <Sun className={cn('theme-icon', theme === 'dark' && 'is-hidden')} />
+            <Moon className={cn('theme-icon', theme === 'light' && 'is-hidden')} />
+          </Button>
         </div>
 
-        <label>
-          DeepSeek API Key
-          <input
+        <div className="field">
+          <Label htmlFor="api-key">DeepSeek API Key</Label>
+          <Input
+            id="api-key"
             value={apiKey}
             onChange={(event) => setApiKey(event.target.value)}
             type="password"
             placeholder={hasEnvApiKey ? 'Using DEEPSEEK_API_KEY from .env' : 'sk-...'}
           />
-        </label>
+        </div>
 
-        <label>
-          Model
-          <input value={model} onChange={(event) => setModel(event.target.value)} />
-        </label>
+        <div className="field">
+          <Label htmlFor="model">Model</Label>
+          <Input id="model" value={model} onChange={(event) => setModel(event.target.value)} />
+        </div>
 
-        <label>
-          Working Directory
-          <input value={cwd} onChange={(event) => setCwd(event.target.value)} />
-        </label>
+        <div className="field">
+          <Label htmlFor="cwd">Working Directory</Label>
+          <Input id="cwd" value={cwd} onChange={(event) => setCwd(event.target.value)} />
+        </div>
 
-        <label>
-          Max Turns
-          <input
+        <div className="field">
+          <Label htmlFor="max-turns">Max Turns</Label>
+          <Input
+            id="max-turns"
             value={maxTurns}
             onChange={(event) => setMaxTurns(Number(event.target.value))}
             type="number"
             min={1}
             max={100}
           />
-        </label>
+        </div>
 
-        <button className="ghost" type="button" onClick={handleClear}>
+        <Button className="ghost" type="button" variant="secondary" onClick={handleClear}>
           Clear Session
-        </button>
+        </Button>
 
         <div className="status">
           <span>Status</span>
           <strong>{status}</strong>
         </div>
-      </section>
+      </Card>
 
-      <section className="workspace">
+      <Card className="workspace">
         <div className="transcript" ref={scrollRef}>
           {items.map((item) => (
             <article className={`bubble ${item.role} ${item.tone ?? ''}`} key={item.id}>
-              <div className="role">{item.role}</div>
+              <Badge className="role" variant={item.tone === 'error' ? 'destructive' : 'secondary'}>
+                {item.role}
+              </Badge>
               <p>{item.text || (item.role === 'assistant' ? '...' : '')}</p>
             </article>
           ))}
         </div>
 
         <form className="composer" onSubmit={handleSubmit}>
-          <textarea
+          <Textarea
             value={prompt}
             onChange={(event) => setPrompt(event.target.value)}
             placeholder="Ask the agent to inspect, edit, run commands, or search files..."
@@ -239,11 +270,11 @@ export function App() {
               }
             }}
           />
-          <button disabled={isRunning || !prompt.trim()} type="submit">
+          <Button className="send-button" disabled={isRunning || !prompt.trim()} type="submit">
             {isRunning ? 'Running' : 'Send'}
-          </button>
+          </Button>
         </form>
-      </section>
+      </Card>
     </main>
   );
 }

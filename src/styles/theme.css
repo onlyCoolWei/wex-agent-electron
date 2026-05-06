@@ -1,0 +1,5 @@
+@import './tokens/colors-base.light.css';
+@import './tokens/colors-base.dark.css';
+@import './tokens/colors-semantic.css';
+@import './tokens/colors-component.css';
+@import './tokens/text-styles.css';

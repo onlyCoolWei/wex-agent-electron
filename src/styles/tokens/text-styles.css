@@ -1,0 +1,125 @@
+/**
+ * Text Styles Tokens
+ * 使用 Tailwind 4 @utility 注册，确保正确参与优先级排序
+ * 用法：class="text-bodyMedium"
+ */
+
+/* ============================================
+   Display - 最大的展示文字
+   ============================================ */
+
+@utility text-displayLarge {
+  font-size: 64px;
+  line-height: normal;
+  font-weight: 600;
+}
+
+@utility text-displayMedium {
+  font-size: 48px;
+  line-height: normal;
+  font-weight: 600;
+}
+
+/* ============================================
+   Headline - 页面级标题
+   ============================================ */
+
+@utility text-headlineLarge {
+  font-size: 36px;
+  line-height: normal;
+  font-weight: 600;
+}
+
+@utility text-headlineMedium {
+  font-size: 28px;
+  line-height: normal;
+  font-weight: 600;
+}
+
+@utility text-headlineSmall {
+  font-size: 24px;
+  line-height: normal;
+  font-weight: 600;
+}
+
+/* ============================================
+   Title - 组件级标题
+   ============================================ */
+
+@utility text-titleLarge {
+  font-size: 20px;
+  line-height: normal;
+  font-weight: 600;
+}
+
+@utility text-titleMedium {
+  font-size: 16px;
+  line-height: normal;
+  font-weight: 600;
+}
+
+@utility text-titleSmall {
+  font-size: 14px;
+  line-height: normal;
+  font-weight: 600;
+}
+
+/* ============================================
+   Body - 正文文字
+   ============================================ */
+
+@utility text-bodyLarge {
+  font-size: 16px;
+  line-height: normal;
+  font-weight: 400;
+}
+
+@utility text-bodyMedium {
+  font-size: 14px;
+  line-height: normal;
+  font-weight: 400;
+}
+
+@utility text-bodySmall {
+  font-size: 12px;
+  line-height: normal;
+  font-weight: 400;
+}
+
+/* ============================================
+   Mark - 标记/强调文字
+   ============================================ */
+
+@utility text-markMedium {
+  font-size: 14px;
+  line-height: normal;
+  font-weight: 600;
+}
+
+@utility text-markSmall {
+  font-size: 12px;
+  line-height: normal;
+  font-weight: 600;
+}
+
+/* ============================================
+   Link - 链接文字
+   ============================================ */
+
+@utility text-linkLarge {
+  font-size: 16px;
+  line-height: normal;
+  font-weight: 400;
+}
+
+@utility text-linkMedium {
+  font-size: 14px;
+  line-height: normal;
+  font-weight: 400;
+}
+
+@utility text-linkSmall {
+  font-size: 12px;
+  line-height: normal;
+  font-weight: 400;
+}

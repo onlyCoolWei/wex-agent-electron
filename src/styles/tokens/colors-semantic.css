@@ -1,0 +1,220 @@
+/* ================================================================
+   语义色（Semantic Colors）- Light/Dark 主题切换
+   ================================================================
+   
+   该文件定义具有明确语义的颜色 Token，用于组件开发。
+   - 不同主题下，同一语义色会映射到不同的基础色
+   - 组件中应优先使用语义色，而不是直接使用基础色
+   - 遵循"关注点分离"原则，便于主题切换和维护
+   
+   ================================================================ */
+
+/* ========================================
+   Light 模式 - 语义色定义
+   ======================================== */
+
+:root {
+  /* ----------------------------------------
+     shadcn/ui 基础语义色
+     ---------------------------------------- */
+  --radius: 0.625rem;
+  --background: var(--color-white-1);
+  --foreground: var(--color-black);
+  --card: var(--color-white-1);
+  --card-foreground: var(--color-gray-14);
+  --popover: var(--color-white-1);
+  --popover-foreground: var(--color-gray-14);
+  --primary: var(--color-gray-12);
+  --primary-foreground: var(--color-gray-1);
+  --secondary: var(--color-gray-1);
+  --secondary-foreground: var(--color-gray-12);
+  --muted: var(--color-gray-1);
+  --muted-foreground: var(--color-gray-7);
+  --accent: var(--color-gray-1);
+  --accent-foreground: var(--color-gray-12);
+  --destructive: var(--color-red-1);
+  --destructive-foreground: #fff;
+  --border: var(--color-gray-3);
+  --input: var(--color-gray-3);
+  --ring: var(--color-gray-6);
+  --chart-1: var(--color-orange-1);
+  --chart-2: var(--color-cyan-1);
+  --chart-3: var(--color-gray-9);
+  --chart-4: var(--color-green-1);
+  --chart-5: var(--color-orange-3);
+  --sidebar: var(--color-gray-1);
+  --sidebar-foreground: var(--color-gray-14);
+  --sidebar-primary: var(--color-gray-12);
+  --sidebar-primary-foreground: var(--color-gray-1);
+  --sidebar-accent: var(--color-gray-3);
+  --sidebar-accent-active: var(--color-gray-4);
+  --sidebar-accent-foreground: var(--color-gray-12);
+  --sidebar-border: var(--color-gray-3);
+  --sidebar-ring: var(--color-gray-6);
+
+  /* ----------------------------------------
+     品牌色（Brand Colors）
+     使用场景：主要按钮、链接、品牌标识等
+     ---------------------------------------- */
+  --brand-color: var(--color-brand-1);
+  --brand-color-hover: var(--color-brand-5);
+  --brand-color-active: var(--color-brand-3);
+  --brand-color-disabled: color-mix(in srgb, var(--color-brand-1) 30%, transparent);
+
+  /* ----------------------------------------
+     错误色（Error Colors）
+     使用场景：错误提示、危险操作、表单验证失败等
+     ---------------------------------------- */
+  --error-color: var(--color-red-1);
+  --error-color-hover: var(--color-red-5);
+  --error-color-active: var(--color-red-3);
+  --error-color-disabled: color-mix(in srgb, var(--color-red-1) 30%, transparent);
+
+  /* ----------------------------------------
+     警示色（Warning Colors）
+     使用场景：警告提示、需要注意的操作等
+     ---------------------------------------- */
+  --warning-color: var(--color-orange-1);
+  --warning-color-hover: var(--color-orange-5);
+  --warning-color-active: var(--color-orange-3);
+  --warning-color-disabled: color-mix(in srgb, var(--color-orange-1) 30%, transparent);
+
+  /* ----------------------------------------
+     成功色（Success Colors）
+     使用场景：成功提示、完成状态、表单验证成功等
+     ---------------------------------------- */
+  --success-color: var(--color-green-1);
+  --success-color-hover: var(--color-green-5);
+  --success-color-active: var(--color-green-3);
+  --success-color-disabled: color-mix(in srgb, var(--color-green-1) 30%, transparent);
+
+  /* ----------------------------------------
+     背景色（Background Colors）
+     使用场景：页面背景、容器背景、层级区分等
+     ---------------------------------------- */
+  --bg-color-page: var(--color-gray-2);
+  --bg-color-container: var(--color-white-1);
+  --bg-color-container-hover: var(--color-gray-1);
+  --bg-color-container-active: var(--color-gray-3);
+  --bg-color-secondarycontainer: var(--color-gray-1);
+  --bg-color-secondarycontainer-hover: var(--color-gray-2);
+  --bg-color-secondarycontainer-active: var(--color-gray-4);
+
+  /* ----------------------------------------
+     组件边框与分割线（Component Borders & Strokes）
+     ---------------------------------------- */
+  --component-stroke: var(--color-gray-3);
+  --component-border: var(--color-gray-3);
+
+  /* ----------------------------------------
+     文字颜色（Text Colors）
+     ---------------------------------------- */
+  --text-color-primary: var(--color-black);
+  --text-color-secondary: color-mix(in srgb, var(--color-black) 60%, transparent);
+  --text-color-placeholder: color-mix(in srgb, var(--color-black) 40%, transparent);
+  --text-color-disabled: color-mix(in srgb, var(--color-black) 20%, transparent);
+  --text-color-brand: var(--brand-color);
+  --text-color-link: var(--brand-color);
+}
+
+/* ========================================
+   Dark 模式 - 语义色定义
+   ======================================== */
+
+.dark {
+  /* ----------------------------------------
+     shadcn/ui 基础语义色 - Dark 模式
+     ---------------------------------------- */
+  --background: var(--color-gray-14);
+  --foreground: var(--color-gray-1);
+  --card: var(--color-gray-12);
+  --card-foreground: var(--color-gray-1);
+  --popover: var(--color-gray-12);
+  --popover-foreground: var(--color-gray-1);
+  --primary: var(--color-gray-3);
+  --primary-foreground: var(--color-gray-12);
+  --secondary: var(--color-gray-11);
+  --secondary-foreground: var(--color-gray-1);
+  --muted: var(--color-gray-11);
+  --muted-foreground: var(--color-gray-6);
+  --accent: var(--color-gray-11);
+  --accent-foreground: var(--color-gray-1);
+  --destructive: var(--color-red-dark-1);
+  --destructive-foreground: #fff;
+  --border: color-mix(in srgb, var(--color-white-1) 10%, transparent);
+  --input: color-mix(in srgb, var(--color-white-1) 15%, transparent);
+  --ring: var(--color-gray-8);
+  --chart-1: var(--color-brand-dark-1);
+  --chart-2: var(--color-cyan-dark-1);
+  --chart-3: var(--color-orange-3);
+  --chart-4: var(--color-purple-dark-1);
+  --chart-5: var(--color-red-dark-1);
+  --sidebar: var(--color-gray-14);
+  --sidebar-foreground: var(--color-gray-1);
+  --sidebar-primary: var(--color-brand-dark-1);
+  --sidebar-primary-foreground: var(--color-gray-1);
+  --sidebar-accent: var(--color-gray-12);
+  --sidebar-accent-active: var(--color-gray-10);
+  --sidebar-accent-foreground: var(--color-gray-1);
+  --sidebar-border: color-mix(in srgb, var(--color-white-1) 10%, transparent);
+  --sidebar-ring: var(--color-gray-8);
+
+  /* ----------------------------------------
+     品牌色（Brand Colors）- Dark 模式
+     ---------------------------------------- */
+  --brand-color: var(--color-brand-dark-1);
+  --brand-color-hover: var(--color-brand-dark-5);
+  --brand-color-active: var(--color-brand-dark-3);
+  --brand-color-disabled: color-mix(in srgb, var(--color-brand-dark-1) 30%, transparent);
+
+  /* ----------------------------------------
+     错误色（Error Colors）- Dark 模式
+     ---------------------------------------- */
+  --error-color: var(--color-red-dark-1);
+  --error-color-hover: var(--color-red-dark-5);
+  --error-color-active: var(--color-red-dark-3);
+  --error-color-disabled: color-mix(in srgb, var(--color-red-dark-1) 30%, transparent);
+
+  /* ----------------------------------------
+     警示色（Warning Colors）- Dark 模式
+     ---------------------------------------- */
+  --warning-color: var(--color-orange-dark-1);
+  --warning-color-hover: var(--color-orange-dark-5);
+  --warning-color-active: var(--color-orange-dark-3);
+  --warning-color-disabled: color-mix(in srgb, var(--color-orange-dark-1) 30%, transparent);
+
+  /* ----------------------------------------
+     成功色（Success Colors）- Dark 模式
+     ---------------------------------------- */
+  --success-color: var(--color-green-dark-1);
+  --success-color-hover: var(--color-green-dark-5);
+  --success-color-active: var(--color-green-dark-3);
+  --success-color-disabled: color-mix(in srgb, var(--color-green-dark-1) 30%, transparent);
+
+  /* ----------------------------------------
+     背景色（Background Colors）- Dark 模式
+     ---------------------------------------- */
+  --bg-color-page: var(--color-gray-14);
+  --bg-color-container: var(--color-gray-13);
+  --bg-color-container-hover: var(--color-gray-12);
+  --bg-color-container-active: var(--color-gray-11);
+  --bg-color-secondarycontainer: var(--color-gray-12);
+  --bg-color-secondarycontainer-hover: var(--color-gray-11);
+  --bg-color-secondarycontainer-active: var(--color-gray-9);
+
+  /* ----------------------------------------
+     组件边框与分割线 - Dark 模式
+     ---------------------------------------- */
+  --component-stroke: var(--color-gray-11);
+  --component-border: var(--color-gray-11);
+
+  /* ----------------------------------------
+     文字颜色 - Dark 模式
+     ---------------------------------------- */
+  --text-color-primary: var(--color-white-1);
+  --text-color-secondary: color-mix(in srgb, var(--color-white-1) 60%, transparent);
+  --text-color-placeholder: color-mix(in srgb, var(--color-white-1) 40%, transparent);
+  --text-color-disabled: color-mix(in srgb, var(--color-white-1) 20%, transparent);
+  --text-color-brand: var(--brand-color);
+  --text-color-link: var(--brand-color);
+}

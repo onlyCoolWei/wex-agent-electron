@@ -1,0 +1,100 @@
+/* 基础色板 - Dark 模式 */
+/* 该文件定义深色模式下的纯颜色值，不带任何语义，仅在定义语义色时使用 */
+
+:root {
+  /* ========================================
+     Dark 模式 - 主题色 (Brand Colors)
+     ======================================== */
+  --color-brand-dark-12: #02060c;
+  --color-brand-dark-11: #050c19;
+  --color-brand-dark-10: #071225;
+  --color-brand-dark-9: #0a1831;
+  --color-brand-dark-8: #0f254a;
+  --color-brand-dark-7: #143163;
+  --color-brand-dark-6: #193d7c;
+  --color-brand-dark-5: #1d4994;
+  --color-brand-dark-4: #2255ad;
+  --color-brand-dark-3: #2762c6;
+  --color-brand-dark-2: #2c6ede;
+  --color-brand-dark-1: #317af7;
+
+  /* ========================================
+     Dark 模式 - 功能色 Red (Error)
+     ======================================== */
+  --color-red-dark-12: #0b0403;
+  --color-red-dark-11: #160706;
+  --color-red-dark-10: #210b08;
+  --color-red-dark-9: #2b0e0b;
+  --color-red-dark-8: #411611;
+  --color-red-dark-7: #571d16;
+  --color-red-dark-6: #6d241c;
+  --color-red-dark-5: #822b22;
+  --color-red-dark-4: #983227;
+  --color-red-dark-3: #ae3a2d;
+  --color-red-dark-2: #c34132;
+  --color-red-dark-1: #d94838;
+
+  /* ========================================
+     Dark 模式 - 功能色 Orange (Warning)
+     ======================================== */
+  --color-orange-dark-12: #0b0503;
+  --color-orange-dark-11: #160b07;
+  --color-orange-dark-10: #21100a;
+  --color-orange-dark-9: #2c150d;
+  --color-orange-dark-8: #422014;
+  --color-orange-dark-7: #582b1a;
+  --color-orange-dark-6: #6e3621;
+  --color-orange-dark-5: #834028;
+  --color-orange-dark-4: #994b2e;
+  --color-orange-dark-3: #af5635;
+  --color-orange-dark-2: #c5603b;
+  --color-orange-dark-1: #d94838;
+
+  /* ========================================
+     Dark 模式 - 功能色 Green (Success)
+     ======================================== */
+  --color-green-dark-12: #050804;
+  --color-green-dark-11: #091108;
+  --color-green-dark-10: #0e190d;
+  --color-green-dark-9: #122211;
+  --color-green-dark-8: #1b3219;
+  --color-green-dark-7: #244322;
+  --color-green-dark-6: #2e542a;
+  --color-green-dark-5: #376532;
+  --color-green-dark-4: #40763b;
+  --color-green-dark-3: #498643;
+  --color-green-dark-2: #52974c;
+  --color-green-dark-1: #5ba854;
+
+  /* ========================================
+     Dark 模式 - 功能色 Purple
+     ======================================== */
+  --color-purple-dark-12: #06030b;
+  --color-purple-dark-11: #0d0717;
+  --color-purple-dark-10: #130a22;
+  --color-purple-dark-9: #190e2d;
+  --color-purple-dark-8: #261544;
+  --color-purple-dark-7: #331c5a;
+  --color-purple-dark-6: #402371;
+  --color-purple-dark-5: #4c2a87;
+  --color-purple-dark-4: #59319e;
+  --color-purple-dark-3: #6638b5;
+  --color-purple-dark-2: #723fcb;
+  --color-purple-dark-1: #7f45e2;
+
+  /* ========================================
+     Dark 模式 - 功能色 Cyan
+     ======================================== */
+  --color-cyan-dark-12: #000808;
+  --color-cyan-dark-11: #011011;
+  --color-cyan-dark-10: #011819;
+  --color-cyan-dark-9: #022021;
+  --color-cyan-dark-8: #023032;
+  --color-cyan-dark-7: #034042;
+  --color-cyan-dark-6: #045053;
+  --color-cyan-dark-5: #056063;
+  --color-cyan-dark-4: #067074;
+  --color-cyan-dark-3: #068084;
+  --color-cyan-dark-2: #079094;
+  --color-cyan-dark-1: #00afaf;
+}
