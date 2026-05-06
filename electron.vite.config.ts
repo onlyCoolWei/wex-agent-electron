@@ -2,6 +2,7 @@ import { resolve } from 'node:path';
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
+import { codeInspectorPlugin } from 'code-inspector-plugin';
 
 export default defineConfig({
   main: {
@@ -26,7 +27,7 @@ export default defineConfig({
   },
   renderer: {
     root: '.',
-    plugins: [react(), tailwindcss()],
+    plugins: [react(), tailwindcss(), codeInspectorPlugin({ bundler: 'vite' })],
     resolve: {
       alias: {
         '@': resolve(__dirname, 'src'),

@@ -3,8 +3,6 @@ import { Moon, Sun } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useTheme } from '@/components/theme-context';
 import { cn } from '@/lib/utils';
@@ -29,11 +27,6 @@ function formatToolInput(input: Record<string, unknown>) {
 export function App() {
   const { theme, setTheme } = useTheme();
   const [prompt, setPrompt] = useState('');
-  const [apiKey, setApiKey] = useState('');
-  const [model, setModel] = useState('deepseek-chat');
-  const [cwd, setCwd] = useState('');
-  const [maxTurns, setMaxTurns] = useState(25);
-  const [hasEnvApiKey, setHasEnvApiKey] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [status, setStatus] = useState('Ready');
   const [items, setItems] = useState<ChatItem[]>([
@@ -108,13 +101,6 @@ export function App() {
   );
 
   useEffect(() => {
-    window.wexAgent.getDefaults().then((defaults) => {
-      setCwd(defaults.cwd);
-      setModel(defaults.model);
-      setMaxTurns(defaults.maxTurns);
-      setHasEnvApiKey(defaults.hasEnvApiKey);
-    });
-
     return window.wexAgent.onAgentEvent((event) => {
       handleAgentEvent(event);
     });
@@ -146,10 +132,6 @@ export function App() {
     try {
       await window.wexAgent.sendPrompt({
         prompt: trimmed,
-        apiKey: apiKey.trim() || undefined,
-        model,
-        cwd,
-        maxTurns,
       });
     } catch (err) {
       setIsRunning(false);
@@ -202,39 +184,6 @@ export function App() {
             <Sun className={cn('theme-icon', theme === 'dark' && 'is-hidden')} />
             <Moon className={cn('theme-icon', theme === 'light' && 'is-hidden')} />
           </Button>
-        </div>
-
-        <div className="field">
-          <Label htmlFor="api-key">DeepSeek API Key</Label>
-          <Input
-            id="api-key"
-            value={apiKey}
-            onChange={(event) => setApiKey(event.target.value)}
-            type="password"
-            placeholder={hasEnvApiKey ? 'Using DEEPSEEK_API_KEY from .env' : 'sk-...'}
-          />
-        </div>
-
-        <div className="field">
-          <Label htmlFor="model">Model</Label>
-          <Input id="model" value={model} onChange={(event) => setModel(event.target.value)} />
-        </div>
-
-        <div className="field">
-          <Label htmlFor="cwd">Working Directory</Label>
-          <Input id="cwd" value={cwd} onChange={(event) => setCwd(event.target.value)} />
-        </div>
-
-        <div className="field">
-          <Label htmlFor="max-turns">Max Turns</Label>
-          <Input
-            id="max-turns"
-            value={maxTurns}
-            onChange={(event) => setMaxTurns(Number(event.target.value))}
-            type="number"
-            min={1}
-            max={100}
-          />
         </div>
 
         <Button className="ghost" type="button" variant="secondary" onClick={handleClear}>

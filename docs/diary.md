@@ -8,3 +8,6 @@
 - 🎛️ 接入项目 design token：引入 `src/styles` 主题变量并让 renderer 样式消费语义色
 - 🌓 适配 shadcn/ui 与昼夜模式：新增基础 UI 组件、主题 Provider，并重构主界面控件
 - 📝 新增昼夜模式技术文档：说明主题状态、design token、shadcn 映射与开发约定
+- 🔧 补充 `.env.example`，保持 `.env` 仅配置 DeepSeek API Key
+- 🔍 接入 `code-inspector-plugin`，支持开发时从页面元素定位到源码
+- 📝 新增 `code-inspector-plugin` 通用技术接入文档，说明 Vite 配置、触发方式与排障建议

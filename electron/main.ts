@@ -79,7 +79,7 @@ ipcMain.handle(
 ipcMain.handle('agent:send', async (_event, payload: AgentSendPayload) => {
   const apiKey = payload.apiKey || process.env.DEEPSEEK_API_KEY;
   if (!apiKey) {
-    const message = 'API key required. Set DEEPSEEK_API_KEY or enter it in the app.';
+    const message = 'API key required. Set DEEPSEEK_API_KEY in .env.';
     sendAgentEvent({ type: 'error', message });
     throw new Error(message);
   }

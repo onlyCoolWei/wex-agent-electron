@@ -3,9 +3,9 @@ import type { LoopResult, Message, ToolResult } from '../agent/types.js';
 export interface AgentSendPayload {
   prompt: string;
   apiKey?: string;
-  model: string;
-  cwd: string;
-  maxTurns: number;
+  model?: string;
+  cwd?: string;
+  maxTurns?: number;
 }
 
 export interface AgentDefaults {
