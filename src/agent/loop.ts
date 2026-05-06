@@ -1,19 +1,11 @@
-import type {
-  AgentConfig,
-  AgentEvents,
-  ContentBlock,
-  LoopResult,
-  LoopState,
-  Message,
-  ToolContext,
-} from "./types.js";
-import { callModel } from "./api.js";
-import { findToolByName } from "./tools/index.js";
+import type { AgentConfig, AgentEvents, ContentBlock, LoopResult, LoopState, Message, ToolContext } from './types.js';
+import { callModel } from './api.js';
+import { findToolByName } from './tools/index.js';
 
 async function executeTools(
   toolUseBlocks: ContentBlock[],
   context: ToolContext,
-  events: AgentEvents = {}
+  events: AgentEvents = {},
 ): Promise<ContentBlock[]> {
   const results: ContentBlock[] = [];
 
@@ -21,7 +13,7 @@ async function executeTools(
     const tool = findToolByName(block.name!);
     if (!tool) {
       results.push({
-        type: "tool_result",
+        type: 'tool_result',
         tool_use_id: block.id,
         content: `Unknown tool: ${block.name}`,
         is_error: true,
@@ -41,7 +33,7 @@ async function executeTools(
         };
         events.onToolResult?.(tool.name, result);
         results.push({
-          type: "tool_result",
+          type: 'tool_result',
           tool_use_id: block.id,
           content: result.content,
           is_error: true,
@@ -53,7 +45,7 @@ async function executeTools(
       events.onToolResult?.(tool.name, result);
 
       results.push({
-        type: "tool_result",
+        type: 'tool_result',
         tool_use_id: block.id,
         content: result.content,
         is_error: result.isError,
@@ -65,7 +57,7 @@ async function executeTools(
       };
       events.onToolResult?.(tool.name, result);
       results.push({
-        type: "tool_result",
+        type: 'tool_result',
         tool_use_id: block.id,
         content: result.content,
         is_error: true,
@@ -80,13 +72,10 @@ export async function agenticLoop(
   config: AgentConfig,
   userMessage: string,
   existingMessages: Message[] = [],
-  events: AgentEvents = {}
+  events: AgentEvents = {},
 ): Promise<LoopResult> {
   const state: LoopState = {
-    messages: [
-      ...existingMessages,
-      { role: "user", content: userMessage },
-    ],
+    messages: [...existingMessages, { role: 'user', content: userMessage }],
     turnCount: 0,
     totalInputTokens: 0,
     totalOutputTokens: 0,
@@ -99,7 +88,7 @@ export async function agenticLoop(
     events.onTurn?.(state.turnCount);
 
     if (state.turnCount > config.maxTurns) {
-      return { reason: "max_turns", state };
+      return { reason: 'max_turns', state };
     }
 
     let response;
@@ -108,7 +97,7 @@ export async function agenticLoop(
     } catch (err: unknown) {
       const message = (err as Error).message;
       events.onError?.(message);
-      return { reason: "error", state, error: message };
+      return { reason: 'error', state, error: message };
     }
 
     state.totalInputTokens += response.inputTokens;
@@ -116,13 +105,13 @@ export async function agenticLoop(
     state.messages.push(response.assistantMessage);
 
     if (response.toolUseBlocks.length === 0) {
-      return { reason: "completed", state };
+      return { reason: 'completed', state };
     }
 
     const toolResults = await executeTools(response.toolUseBlocks, toolContext, events);
 
     state.messages.push({
-      role: "user",
+      role: 'user',
       content: toolResults,
     });
   }

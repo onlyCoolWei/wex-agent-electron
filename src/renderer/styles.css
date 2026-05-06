@@ -1,11 +1,7 @@
 :root {
   color: #eef4ed;
   background: #0c0f12;
-  font-family:
-    "Avenir Next",
-    "Gill Sans",
-    "Helvetica Neue",
-    sans-serif;
+  font-family: 'Avenir Next', 'Gill Sans', 'Helvetica Neue', sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
@@ -66,7 +62,7 @@ textarea {
 h1 {
   margin: 0;
   max-width: 8ch;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: Georgia, 'Times New Roman', serif;
   font-size: 48px;
   line-height: 0.92;
   letter-spacing: -0.06em;

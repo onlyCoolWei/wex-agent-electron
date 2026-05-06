@@ -1,18 +1,18 @@
-import { execSync } from "node:child_process";
-import { z } from "zod";
-import type { Tool, ToolContext, ToolResult } from "../types.js";
+import { execSync } from 'node:child_process';
+import { z } from 'zod';
+import type { Tool, ToolContext, ToolResult } from '../types.js';
 
 const inputSchema = z.object({
-  command: z.string().describe("The shell command to execute"),
-  timeout: z.number().default(30000).describe("Timeout in milliseconds"),
+  command: z.string().describe('The shell command to execute'),
+  timeout: z.number().default(30000).describe('Timeout in milliseconds'),
 });
 
 type BashInput = z.infer<typeof inputSchema>;
 
 export const BashTool: Tool<BashInput> = {
-  name: "bash",
+  name: 'bash',
   description:
-    "Execute a shell command and return its output. Use for running scripts, installing packages, git operations, etc.",
+    'Execute a shell command and return its output. Use for running scripts, installing packages, git operations, etc.',
   inputSchema,
   isReadOnly: false,
 
@@ -21,14 +21,14 @@ export const BashTool: Tool<BashInput> = {
       const output = execSync(input.command, {
         cwd: context.cwd,
         timeout: input.timeout,
-        encoding: "utf-8",
+        encoding: 'utf-8',
         maxBuffer: 1024 * 1024,
-        stdio: ["pipe", "pipe", "pipe"],
+        stdio: ['pipe', 'pipe', 'pipe'],
       });
-      return { content: output || "(no output)" };
+      return { content: output || '(no output)' };
     } catch (err: unknown) {
       const error = err as { stderr?: string; message?: string; status?: number };
-      const stderr = error.stderr || error.message || "Unknown error";
+      const stderr = error.stderr || error.message || 'Unknown error';
       return {
         content: `Exit code: ${error.status ?? 1}\n${stderr}`,
         isError: true,

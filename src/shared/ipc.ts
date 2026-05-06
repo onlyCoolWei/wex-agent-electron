@@ -1,4 +1,4 @@
-import type { LoopResult, Message, ToolResult } from "../agent/types.js";
+import type { LoopResult, Message, ToolResult } from '../agent/types.js';
 
 export interface AgentSendPayload {
   prompt: string;
@@ -16,12 +16,12 @@ export interface AgentDefaults {
 }
 
 export type AgentEvent =
-  | { type: "turn"; turn: number }
-  | { type: "text"; text: string }
-  | { type: "tool_start"; name: string; input: Record<string, unknown> }
-  | { type: "tool_result"; name: string; result: ToolResult }
-  | { type: "error"; message: string }
-  | { type: "done"; result: LoopResult };
+  | { type: 'turn'; turn: number }
+  | { type: 'text'; text: string }
+  | { type: 'tool_start'; name: string; input: Record<string, unknown> }
+  | { type: 'tool_result'; name: string; result: ToolResult }
+  | { type: 'error'; message: string }
+  | { type: 'done'; result: LoopResult };
 
 export interface AgentClearResult {
   ok: true;

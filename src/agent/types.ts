@@ -1,6 +1,6 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-export type Role = "user" | "assistant" | "system";
+export type Role = 'user' | 'assistant' | 'system';
 
 export interface Message {
   role: Role;
@@ -8,7 +8,7 @@ export interface Message {
 }
 
 export interface ContentBlock {
-  type: "text" | "tool_use" | "tool_result";
+  type: 'text' | 'tool_use' | 'tool_result';
   text?: string;
   id?: string;
   name?: string;
@@ -36,7 +36,7 @@ export interface ToolContext {
   abortSignal?: AbortSignal;
 }
 
-export type StopReason = "completed" | "aborted" | "error" | "max_turns";
+export type StopReason = 'completed' | 'aborted' | 'error' | 'max_turns';
 
 export interface LoopState {
   messages: Message[];

@@ -1,45 +1,45 @@
-import { execSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
-import { getAllTools } from "./tools/index.js";
+import { execSync } from 'node:child_process';
+import { existsSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { getAllTools } from './tools/index.js';
 
 function loadProjectMemory(cwd: string): string {
-  const candidates = ["AGENT.md", "CLAUDE.md", ".agent/instructions.md"];
+  const candidates = ['AGENT.md', 'CLAUDE.md', '.agent/instructions.md'];
   for (const name of candidates) {
     const path = resolve(cwd, name);
     if (existsSync(path)) {
       try {
-        return `\n<project_memory>\n${readFileSync(path, "utf-8")}\n</project_memory>`;
+        return `\n<project_memory>\n${readFileSync(path, 'utf-8')}\n</project_memory>`;
       } catch {
         // ignore unreadable project memory files
       }
     }
   }
-  return "";
+  return '';
 }
 
 function getGitContext(cwd: string): string {
   try {
-    const branch = execSync("git branch --show-current", {
+    const branch = execSync('git branch --show-current', {
       cwd,
-      encoding: "utf-8",
+      encoding: 'utf-8',
       timeout: 3000,
     }).trim();
-    const status = execSync("git status --short", {
+    const status = execSync('git status --short', {
       cwd,
-      encoding: "utf-8",
+      encoding: 'utf-8',
       timeout: 3000,
     }).trim();
-    const changed = status ? `\nChanged files:\n${status}` : "\nWorking tree clean.";
+    const changed = status ? `\nChanged files:\n${status}` : '\nWorking tree clean.';
     return `\n<git_context>\nBranch: ${branch}${changed}\n</git_context>`;
   } catch {
-    return "";
+    return '';
   }
 }
 
 export function buildSystemPrompt(cwd: string): string {
   const tools = getAllTools();
-  const toolList = tools.map((t) => `- ${t.name}: ${t.description}`).join("\n");
+  const toolList = tools.map((t) => `- ${t.name}: ${t.description}`).join('\n');
 
   const projectMemory = loadProjectMemory(cwd);
   const gitContext = getGitContext(cwd);
@@ -48,7 +48,7 @@ export function buildSystemPrompt(cwd: string): string {
 
 <environment>
 Working directory: ${cwd}
-Date: ${new Date().toISOString().split("T")[0]}
+Date: ${new Date().toISOString().split('T')[0]}
 </environment>
 
 <tools_available>

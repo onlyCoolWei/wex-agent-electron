@@ -1,20 +1,19 @@
-import { z } from "zod";
-import { readFileSync, statSync } from "node:fs";
-import { resolve } from "node:path";
-import type { Tool, ToolContext, ToolResult } from "../types.js";
+import { z } from 'zod';
+import { readFileSync, statSync } from 'node:fs';
+import { resolve } from 'node:path';
+import type { Tool, ToolContext, ToolResult } from '../types.js';
 
 const inputSchema = z.object({
-  path: z.string().describe("File path to read (relative to cwd)"),
-  startLine: z.number().optional().describe("Start line (1-indexed)"),
-  endLine: z.number().optional().describe("End line (1-indexed, inclusive)"),
+  path: z.string().describe('File path to read (relative to cwd)'),
+  startLine: z.number().optional().describe('Start line (1-indexed)'),
+  endLine: z.number().optional().describe('End line (1-indexed, inclusive)'),
 });
 
 type ReadFileInput = z.infer<typeof inputSchema>;
 
 export const ReadFileTool: Tool<ReadFileInput> = {
-  name: "read_file",
-  description:
-    "Read the contents of a file. Supports optional line range. Returns the file content as text.",
+  name: 'read_file',
+  description: 'Read the contents of a file. Supports optional line range. Returns the file content as text.',
   inputSchema,
   isReadOnly: true,
 
@@ -30,13 +29,13 @@ export const ReadFileTool: Tool<ReadFileInput> = {
         };
       }
 
-      let content = readFileSync(fullPath, "utf-8");
+      let content = readFileSync(fullPath, 'utf-8');
 
       if (input.startLine || input.endLine) {
-        const lines = content.split("\n");
+        const lines = content.split('\n');
         const start = (input.startLine ?? 1) - 1;
         const end = input.endLine ?? lines.length;
-        content = lines.slice(start, end).join("\n");
+        content = lines.slice(start, end).join('\n');
       }
 
       return { content };

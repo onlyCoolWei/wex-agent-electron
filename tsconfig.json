@@ -17,10 +17,6 @@
       "@agent/*": ["./src/agent/*"]
     }
   },
-  "include": [
-    "electron/**/*",
-    "src/**/*",
-    "electron.vite.config.ts"
-  ],
+  "include": ["electron/**/*", "src/**/*", "electron.vite.config.ts"],
   "exclude": ["node_modules", "out", "dist"]
 }

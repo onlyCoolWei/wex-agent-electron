@@ -1,11 +1,11 @@
-import { FormEvent, useEffect, useRef, useState } from "react";
-import type { AgentEvent } from "../shared/ipc";
+import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
+import type { AgentEvent } from '../shared/ipc';
 
 type ChatItem = {
   id: string;
-  role: "user" | "assistant" | "tool" | "system";
+  role: 'user' | 'assistant' | 'tool' | 'system';
   text: string;
-  tone?: "error" | "muted";
+  tone?: 'error' | 'muted';
 };
 
 function createId() {
@@ -18,25 +18,84 @@ function formatToolInput(input: Record<string, unknown>) {
 }
 
 export function App() {
-  const [prompt, setPrompt] = useState("");
-  const [apiKey, setApiKey] = useState("");
-  const [model, setModel] = useState("deepseek-chat");
-  const [cwd, setCwd] = useState("");
+  const [prompt, setPrompt] = useState('');
+  const [apiKey, setApiKey] = useState('');
+  const [model, setModel] = useState('deepseek-chat');
+  const [cwd, setCwd] = useState('');
   const [maxTurns, setMaxTurns] = useState(25);
   const [hasEnvApiKey, setHasEnvApiKey] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
-  const [status, setStatus] = useState("Ready");
+  const [status, setStatus] = useState('Ready');
   const [items, setItems] = useState<ChatItem[]>([
     {
       id: createId(),
-      role: "system",
-      text: "Wex Agent Electron is ready. The agent core runs in Electron main process with the same loop, DeepSeek streaming call, and tools as wex-agent.",
-      tone: "muted",
+      role: 'system',
+      text: 'Wex Agent Electron is ready. The agent core runs in Electron main process with the same loop, DeepSeek streaming call, and tools as wex-agent.',
+      tone: 'muted',
     },
   ]);
 
   const activeAssistantId = useRef<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const appendItem = useCallback((item: ChatItem) => {
+    setItems((prev) => [...prev, item]);
+  }, []);
+
+  const appendAssistantText = useCallback((text: string) => {
+    const id = activeAssistantId.current;
+    if (!id) return;
+    setItems((prev) => prev.map((item) => (item.id === id ? { ...item, text: `${item.text}${text}` } : item)));
+  }, []);
+
+  const handleAgentEvent = useCallback(
+    (event: AgentEvent) => {
+      if (event.type === 'turn') {
+        setStatus(`Thinking, turn ${event.turn}`);
+        return;
+      }
+      if (event.type === 'text') {
+        appendAssistantText(event.text);
+        return;
+      }
+      if (event.type === 'tool_start') {
+        appendItem({
+          id: createId(),
+          role: 'tool',
+          text: `Running ${event.name} ${formatToolInput(event.input)}`,
+          tone: 'muted',
+        });
+        return;
+      }
+      if (event.type === 'tool_result') {
+        appendItem({
+          id: createId(),
+          role: 'tool',
+          text: `${event.name}: ${event.result.content.slice(0, 360)}`,
+          tone: event.result.isError ? 'error' : 'muted',
+        });
+        return;
+      }
+      if (event.type === 'error') {
+        setStatus('Error');
+        appendItem({
+          id: createId(),
+          role: 'system',
+          text: event.message,
+          tone: 'error',
+        });
+        return;
+      }
+      if (event.type === 'done') {
+        setStatus(
+          `Done: ${event.result.reason}, ${event.result.state.turnCount} turns, ${event.result.state.totalInputTokens}+${event.result.state.totalOutputTokens} tokens`,
+        );
+        setIsRunning(false);
+        activeAssistantId.current = null;
+      }
+    },
+    [appendAssistantText, appendItem],
+  );
 
   useEffect(() => {
     window.wexAgent.getDefaults().then((defaults) => {
@@ -49,74 +108,14 @@ export function App() {
     return window.wexAgent.onAgentEvent((event) => {
       handleAgentEvent(event);
     });
-  }, []);
+  }, [handleAgentEvent]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({
       top: scrollRef.current.scrollHeight,
-      behavior: "smooth",
+      behavior: 'smooth',
     });
   }, [items]);
-
-  function appendItem(item: ChatItem) {
-    setItems((prev) => [...prev, item]);
-  }
-
-  function appendAssistantText(text: string) {
-    const id = activeAssistantId.current;
-    if (!id) return;
-    setItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, text: `${item.text}${text}` } : item
-      )
-    );
-  }
-
-  function handleAgentEvent(event: AgentEvent) {
-    if (event.type === "turn") {
-      setStatus(`Thinking, turn ${event.turn}`);
-      return;
-    }
-    if (event.type === "text") {
-      appendAssistantText(event.text);
-      return;
-    }
-    if (event.type === "tool_start") {
-      appendItem({
-        id: createId(),
-        role: "tool",
-        text: `Running ${event.name} ${formatToolInput(event.input)}`,
-        tone: "muted",
-      });
-      return;
-    }
-    if (event.type === "tool_result") {
-      appendItem({
-        id: createId(),
-        role: "tool",
-        text: `${event.name}: ${event.result.content.slice(0, 360)}`,
-        tone: event.result.isError ? "error" : "muted",
-      });
-      return;
-    }
-    if (event.type === "error") {
-      setStatus("Error");
-      appendItem({
-        id: createId(),
-        role: "system",
-        text: event.message,
-        tone: "error",
-      });
-      return;
-    }
-    if (event.type === "done") {
-      setStatus(
-        `Done: ${event.result.reason}, ${event.result.state.turnCount} turns, ${event.result.state.totalInputTokens}+${event.result.state.totalOutputTokens} tokens`
-      );
-      setIsRunning(false);
-      activeAssistantId.current = null;
-    }
-  }
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -125,13 +124,13 @@ export function App() {
 
     const assistantId = createId();
     activeAssistantId.current = assistantId;
-    setPrompt("");
+    setPrompt('');
     setIsRunning(true);
-    setStatus("Starting agent loop");
+    setStatus('Starting agent loop');
     setItems((prev) => [
       ...prev,
-      { id: createId(), role: "user", text: trimmed },
-      { id: assistantId, role: "assistant", text: "" },
+      { id: createId(), role: 'user', text: trimmed },
+      { id: assistantId, role: 'assistant', text: '' },
     ]);
 
     try {
@@ -147,9 +146,9 @@ export function App() {
       activeAssistantId.current = null;
       appendItem({
         id: createId(),
-        role: "system",
+        role: 'system',
         text: (err as Error).message,
-        tone: "error",
+        tone: 'error',
       });
     }
   }
@@ -158,13 +157,13 @@ export function App() {
     await window.wexAgent.clearSession();
     activeAssistantId.current = null;
     setIsRunning(false);
-    setStatus("Session cleared");
+    setStatus('Session cleared');
     setItems([
       {
         id: createId(),
-        role: "system",
-        text: "Session cleared. The next prompt starts a fresh message history.",
-        tone: "muted",
+        role: 'system',
+        text: 'Session cleared. The next prompt starts a fresh message history.',
+        tone: 'muted',
       },
     ]);
   }
@@ -175,9 +174,7 @@ export function App() {
         <div>
           <p className="eyebrow">Desktop Agent</p>
           <h1>Wex Agent Electron</h1>
-          <p className="lede">
-            React + Vite + Electron shell around the original wex-agent loop.
-          </p>
+          <p className="lede">React + Vite + Electron shell around the original wex-agent loop.</p>
         </div>
 
         <label>
@@ -186,7 +183,7 @@ export function App() {
             value={apiKey}
             onChange={(event) => setApiKey(event.target.value)}
             type="password"
-            placeholder={hasEnvApiKey ? "Using DEEPSEEK_API_KEY from .env" : "sk-..."}
+            placeholder={hasEnvApiKey ? 'Using DEEPSEEK_API_KEY from .env' : 'sk-...'}
           />
         </label>
 
@@ -224,9 +221,9 @@ export function App() {
       <section className="workspace">
         <div className="transcript" ref={scrollRef}>
           {items.map((item) => (
-            <article className={`bubble ${item.role} ${item.tone ?? ""}`} key={item.id}>
+            <article className={`bubble ${item.role} ${item.tone ?? ''}`} key={item.id}>
               <div className="role">{item.role}</div>
-              <p>{item.text || (item.role === "assistant" ? "..." : "")}</p>
+              <p>{item.text || (item.role === 'assistant' ? '...' : '')}</p>
             </article>
           ))}
         </div>
@@ -237,13 +234,13 @@ export function App() {
             onChange={(event) => setPrompt(event.target.value)}
             placeholder="Ask the agent to inspect, edit, run commands, or search files..."
             onKeyDown={(event) => {
-              if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+              if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
                 event.currentTarget.form?.requestSubmit();
               }
             }}
           />
           <button disabled={isRunning || !prompt.trim()} type="submit">
-            {isRunning ? "Running" : "Send"}
+            {isRunning ? 'Running' : 'Send'}
           </button>
         </form>
       </section>

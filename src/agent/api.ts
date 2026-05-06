@@ -1,6 +1,6 @@
-import OpenAI from "openai";
-import type { AgentConfig, ContentBlock, Message } from "./types.js";
-import { getAllTools, toolsToAPIFormat } from "./tools/index.js";
+import OpenAI from 'openai';
+import type { AgentConfig, ContentBlock, Message } from './types.js';
+import { getAllTools, toolsToAPIFormat } from './tools/index.js';
 
 let client: OpenAI | null = null;
 let clientApiKey: string | null = null;
@@ -9,7 +9,7 @@ function getClient(apiKey: string): OpenAI {
   if (!client || clientApiKey !== apiKey) {
     client = new OpenAI({
       apiKey,
-      baseURL: "https://api.deepseek.com",
+      baseURL: 'https://api.deepseek.com',
     });
     clientApiKey = apiKey;
   }
@@ -26,7 +26,7 @@ export interface APIResponse {
 
 function convertTools(tools: ReturnType<typeof toolsToAPIFormat>) {
   return tools.map((t: Record<string, unknown>) => ({
-    type: "function" as const,
+    type: 'function' as const,
     function: {
       name: t.name as string,
       description: t.description as string,
@@ -35,38 +35,35 @@ function convertTools(tools: ReturnType<typeof toolsToAPIFormat>) {
   }));
 }
 
-function convertMessages(
-  messages: Message[],
-  systemPrompt: string
-): OpenAI.ChatCompletionMessageParam[] {
+function convertMessages(messages: Message[], systemPrompt: string): OpenAI.ChatCompletionMessageParam[] {
   const result: OpenAI.ChatCompletionMessageParam[] = [];
 
   if (systemPrompt) {
-    result.push({ role: "system", content: systemPrompt });
+    result.push({ role: 'system', content: systemPrompt });
   }
 
   for (const m of messages) {
-    if (m.role === "system") continue;
+    if (m.role === 'system') continue;
 
-    if (typeof m.content === "string") {
+    if (typeof m.content === 'string') {
       result.push({
-        role: m.role as "user" | "assistant",
+        role: m.role as 'user' | 'assistant',
         content: m.content,
       });
       continue;
     }
 
-    if (m.role === "assistant") {
+    if (m.role === 'assistant') {
       const textParts = m.content
-        .filter((b) => b.type === "text")
+        .filter((b) => b.type === 'text')
         .map((b) => b.text)
-        .join("");
+        .join('');
 
       const toolCalls = m.content
-        .filter((b) => b.type === "tool_use")
+        .filter((b) => b.type === 'tool_use')
         .map((b) => ({
           id: b.id!,
-          type: "function" as const,
+          type: 'function' as const,
           function: {
             name: b.name!,
             arguments: JSON.stringify(b.input),
@@ -74,29 +71,29 @@ function convertMessages(
         }));
 
       const msg: OpenAI.ChatCompletionAssistantMessageParam = {
-        role: "assistant",
+        role: 'assistant',
         content: textParts || null,
       };
       if (toolCalls.length > 0) {
         msg.tool_calls = toolCalls;
       }
       result.push(msg);
-    } else if (m.role === "user") {
-      const toolResults = m.content.filter((b) => b.type === "tool_result");
+    } else if (m.role === 'user') {
+      const toolResults = m.content.filter((b) => b.type === 'tool_result');
       if (toolResults.length > 0) {
         for (const tr of toolResults) {
           result.push({
-            role: "tool",
+            role: 'tool',
             tool_call_id: tr.tool_use_id!,
-            content: tr.content || "",
+            content: tr.content || '',
           });
         }
       } else {
         const text = m.content
-          .filter((b) => b.type === "text")
+          .filter((b) => b.type === 'text')
           .map((b) => b.text)
-          .join("");
-        result.push({ role: "user", content: text });
+          .join('');
+        result.push({ role: 'user', content: text });
       }
     }
   }
@@ -107,7 +104,7 @@ function convertMessages(
 export async function callModel(
   config: AgentConfig,
   messages: Message[],
-  onText?: (text: string) => void
+  onText?: (text: string) => void,
 ): Promise<APIResponse> {
   const openai = getClient(config.apiKey);
   const tools = convertTools(toolsToAPIFormat(getAllTools()));
@@ -121,11 +118,8 @@ export async function callModel(
     stream: true,
   });
 
-  let fullText = "";
-  const toolCallsMap = new Map<
-    number,
-    { id: string; name: string; arguments: string }
-  >();
+  let fullText = '';
+  const toolCallsMap = new Map<number, { id: string; name: string; arguments: string }>();
 
   let inputTokens = 0;
   let outputTokens = 0;
@@ -147,9 +141,9 @@ export async function callModel(
         const idx = tc.index;
         if (!toolCallsMap.has(idx)) {
           toolCallsMap.set(idx, {
-            id: tc.id || "",
-            name: tc.function?.name || "",
-            arguments: "",
+            id: tc.id || '',
+            name: tc.function?.name || '',
+            arguments: '',
           });
         }
         const entry = toolCallsMap.get(idx)!;
@@ -173,18 +167,19 @@ export async function callModel(
   const toolUseBlocks: ContentBlock[] = [];
 
   if (fullText) {
-    contentBlocks.push({ type: "text", text: fullText });
+    contentBlocks.push({ type: 'text', text: fullText });
   }
 
   for (const [, tc] of toolCallsMap) {
-    let parsedInput: Record<string, unknown> = {};
-    try {
-      parsedInput = JSON.parse(tc.arguments);
-    } catch {
-      parsedInput = {};
-    }
+    const parsedInput: Record<string, unknown> = (() => {
+      try {
+        return JSON.parse(tc.arguments);
+      } catch {
+        return {};
+      }
+    })();
     const toolBlock: ContentBlock = {
-      type: "tool_use",
+      type: 'tool_use',
       id: tc.id,
       name: tc.name,
       input: parsedInput,
@@ -193,14 +188,17 @@ export async function callModel(
     toolUseBlocks.push(toolBlock);
   }
 
-  let stopReason: string | null = null;
-  if (finishReason === "stop") stopReason = "end_turn";
-  else if (finishReason === "tool_calls") stopReason = "tool_use";
-  else if (finishReason === "length") stopReason = "max_tokens";
-  else stopReason = finishReason;
+  const stopReason =
+    finishReason === 'stop'
+      ? 'end_turn'
+      : finishReason === 'tool_calls'
+        ? 'tool_use'
+        : finishReason === 'length'
+          ? 'max_tokens'
+          : finishReason;
 
   return {
-    assistantMessage: { role: "assistant", content: contentBlocks },
+    assistantMessage: { role: 'assistant', content: contentBlocks },
     toolUseBlocks,
     inputTokens,
     outputTokens,
