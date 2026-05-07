@@ -11,3 +11,8 @@
 - 🔧 补充 `.env.example`，保持 `.env` 仅配置 DeepSeek API Key
 - 🔍 接入 `code-inspector-plugin`，支持开发时从页面元素定位到源码
 - 📝 新增 `code-inspector-plugin` 通用技术接入文档，说明 Vite 配置、触发方式与排障建议
+
+### 2026-05-07
+
+- 📦 修复 macOS universal 打包：调整 Tailwind 构建依赖归类，并排除 Tailwind/Lightning CSS 构建期 native 包
+- 📦 调整 macOS 打包架构：分别生成 Intel x64 与 Apple Silicon arm64 产物，并补充单架构打包脚本

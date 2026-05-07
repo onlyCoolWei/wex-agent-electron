@@ -1,0 +1,48 @@
+appId: com.wex.agent.electron
+productName: Wex Agent
+asar: true
+
+directories:
+  output: release
+
+files:
+  - out/**/*
+  - package.json
+  - '!node_modules/@tailwindcss/**'
+  - '!node_modules/tailwindcss/**'
+  - '!node_modules/lightningcss*/**'
+
+extraMetadata:
+  main: out/main/index.js
+
+artifactName: ${productName}-${version}-${os}-${arch}.${ext}
+
+mac:
+  category: public.app-category.developer-tools
+  identity: null
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+    - target: zip
+      arch:
+        - x64
+        - arm64
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: zip
+      arch:
+        - x64
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Wex Agent
