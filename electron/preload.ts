@@ -5,6 +5,7 @@ import type {
   AgentEvent,
   AgentSendPayload,
   AgentSessionSnapshot,
+  ProjectDirectorySelection,
 } from '../src/shared/ipc.js';
 import type { LoopResult } from '../src/agent/types.js';
 
@@ -13,6 +14,7 @@ const api = {
   clearSession: () => ipcRenderer.invoke('agent:clear') as Promise<AgentClearResult>,
   getSnapshot: () => ipcRenderer.invoke('agent:snapshot') as Promise<AgentSessionSnapshot>,
   sendPrompt: (payload: AgentSendPayload) => ipcRenderer.invoke('agent:send', payload) as Promise<LoopResult>,
+  selectProjectDirectory: () => ipcRenderer.invoke('project:select-directory') as Promise<ProjectDirectorySelection>,
   onAgentEvent: (callback: (event: AgentEvent) => void) => {
     const listener = (_event: Electron.IpcRendererEvent, data: AgentEvent) => callback(data);
     ipcRenderer.on('agent:event', listener);

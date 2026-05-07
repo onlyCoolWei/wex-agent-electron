@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { app, BrowserWindow, ipcMain } from 'electron';
-import { join } from 'node:path';
+import { app, BrowserWindow, dialog, ipcMain } from 'electron';
+import { basename, join } from 'node:path';
 import type { Message } from '../src/agent/types.js';
 import { buildSystemPrompt } from '../src/agent/context.js';
 import { agenticLoop } from '../src/agent/loop.js';
@@ -10,6 +10,7 @@ import type {
   AgentEvent,
   AgentSendPayload,
   AgentSessionSnapshot,
+  ProjectDirectorySelection,
 } from '../src/shared/ipc.js';
 
 let mainWindow: BrowserWindow | null = null;
@@ -75,6 +76,26 @@ ipcMain.handle(
     messages: sessionMessages,
   }),
 );
+
+ipcMain.handle('project:select-directory', async (): Promise<ProjectDirectorySelection> => {
+  const options = {
+    title: '选择项目目录',
+    buttonLabel: '打开项目',
+    properties: ['openDirectory', 'createDirectory'],
+  } satisfies Electron.OpenDialogOptions;
+  const result = mainWindow ? await dialog.showOpenDialog(mainWindow, options) : await dialog.showOpenDialog(options);
+
+  const selectedPath = result.filePaths[0];
+  if (result.canceled || !selectedPath) {
+    return { canceled: true };
+  }
+
+  return {
+    canceled: false,
+    path: selectedPath,
+    name: basename(selectedPath) || selectedPath,
+  };
+});
 
 ipcMain.handle('agent:send', async (_event, payload: AgentSendPayload) => {
   const apiKey = payload.apiKey || process.env.DEEPSEEK_API_KEY;

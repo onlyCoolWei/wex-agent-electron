@@ -30,3 +30,13 @@ export interface AgentClearResult {
 export interface AgentSessionSnapshot {
   messages: Message[];
 }
+
+export type ProjectDirectorySelection =
+  | {
+      canceled: true;
+    }
+  | {
+      canceled: false;
+      path: string;
+      name: string;
+    };

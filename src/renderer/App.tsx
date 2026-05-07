@@ -1,10 +1,9 @@
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
-import { Moon, Sun } from 'lucide-react';
+import { FolderOpen, FolderPlus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { useTheme } from '@/components/theme-context';
 import { cn } from '@/lib/utils';
 import type { AgentEvent } from '../shared/ipc';
 
@@ -15,8 +14,18 @@ type ChatItem = {
   tone?: 'error' | 'muted';
 };
 
+type ProjectItem = {
+  id: string;
+  name: string;
+  path: string;
+};
+
 function createId() {
   return globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
+}
+
+function getProjectName(path: string) {
+  return path.split(/[\\/]/).filter(Boolean).at(-1) ?? path;
 }
 
 function formatToolInput(input: Record<string, unknown>) {
@@ -25,10 +34,11 @@ function formatToolInput(input: Record<string, unknown>) {
 }
 
 export function App() {
-  const { theme, setTheme } = useTheme();
   const [prompt, setPrompt] = useState('');
   const [isRunning, setIsRunning] = useState(false);
   const [status, setStatus] = useState('Ready');
+  const [projects, setProjects] = useState<ProjectItem[]>([]);
+  const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const [items, setItems] = useState<ChatItem[]>([
     {
       id: createId(),
@@ -40,6 +50,7 @@ export function App() {
 
   const activeAssistantId = useRef<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const activeProject = projects.find((project) => project.id === activeProjectId) ?? projects[0] ?? null;
 
   const appendItem = useCallback((item: ChatItem) => {
     setItems((prev) => [...prev, item]);
@@ -100,6 +111,53 @@ export function App() {
     [appendAssistantText, appendItem],
   );
 
+  const resetConversation = useCallback((text: string) => {
+    activeAssistantId.current = null;
+    setIsRunning(false);
+    setItems([
+      {
+        id: createId(),
+        role: 'system',
+        text,
+        tone: 'muted',
+      },
+    ]);
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    window.wexAgent
+      .getDefaults()
+      .then((defaults) => {
+        if (!isMounted) return;
+
+        const defaultProject = {
+          id: defaults.cwd,
+          name: getProjectName(defaults.cwd),
+          path: defaults.cwd,
+        };
+
+        setProjects((prev) => (prev.length > 0 ? prev : [defaultProject]));
+        setActiveProjectId((prev) => prev ?? defaultProject.id);
+        setStatus(`Workspace: ${defaultProject.name}`);
+      })
+      .catch((err) => {
+        if (!isMounted) return;
+
+        appendItem({
+          id: createId(),
+          role: 'system',
+          text: (err as Error).message,
+          tone: 'error',
+        });
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [appendItem]);
+
   useEffect(() => {
     return window.wexAgent.onAgentEvent((event) => {
       handleAgentEvent(event);
@@ -132,6 +190,7 @@ export function App() {
     try {
       await window.wexAgent.sendPrompt({
         prompt: trimmed,
+        cwd: activeProject?.path,
       });
     } catch (err) {
       setIsRunning(false);
@@ -145,58 +204,117 @@ export function App() {
     }
   }
 
-  async function handleClear() {
+  async function activateProject(project: ProjectItem) {
+    if (project.id === activeProject?.id) return;
+
+    setActiveProjectId(project.id);
     await window.wexAgent.clearSession();
-    activeAssistantId.current = null;
-    setIsRunning(false);
-    setStatus('Session cleared');
-    setItems([
-      {
-        id: createId(),
-        role: 'system',
-        text: 'Session cleared. The next prompt starts a fresh message history.',
-        tone: 'muted',
-      },
-    ]);
+    setStatus(`Workspace: ${project.name}`);
+    resetConversation(`Opened ${project.name}. The agent will use ${project.path} as its working directory.`);
   }
 
-  function handleToggleTheme() {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
+  async function handleAddProject() {
+    try {
+      const selection = await window.wexAgent.selectProjectDirectory();
+      if (selection.canceled) return;
+
+      const project = {
+        id: selection.path,
+        name: selection.name,
+        path: selection.path,
+      };
+
+      setProjects((prev) => (prev.some((item) => item.path === project.path) ? prev : [...prev, project]));
+      setActiveProjectId(project.id);
+      await window.wexAgent.clearSession();
+      setStatus(`Workspace: ${project.name}`);
+      resetConversation(`Opened ${project.name}. The agent will use ${project.path} as its working directory.`);
+    } catch (err) {
+      appendItem({
+        id: createId(),
+        role: 'system',
+        text: (err as Error).message,
+        tone: 'error',
+      });
+    }
+  }
+
+  async function handleClear() {
+    await window.wexAgent.clearSession();
+    setStatus('Session cleared');
+    resetConversation(
+      activeProject
+        ? `Session cleared. The next prompt will run in ${activeProject.path}.`
+        : 'Session cleared. The next prompt starts a fresh message history.',
+    );
   }
 
   return (
     <main className="shell">
-      <Card className="sidebar">
-        <div className="hero">
-          <div>
-            <p className="eyebrow">Desktop Agent</p>
-            <h1>Wex Agent Electron</h1>
-            <p className="lede">React + Vite + Electron shell around the original wex-agent loop.</p>
+      <aside className="app-sidebar" aria-label="侧边栏">
+        <Card className="sidebar project-sidebar">
+          <div className="project-header">
+            <Button
+              aria-label="新增项目"
+              className="add-project"
+              size="icon-sm"
+              type="button"
+              variant="secondary"
+              onClick={handleAddProject}
+            >
+              <FolderPlus />
+            </Button>
+            <Button className="new-project-button" type="button" variant="secondary" onClick={handleAddProject}>
+              新增项目
+            </Button>
           </div>
-          <Button
-            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-            className="theme-toggle"
-            size="icon"
-            type="button"
-            variant="outline"
-            onClick={handleToggleTheme}
-          >
-            <Sun className={cn('theme-icon', theme === 'dark' && 'is-hidden')} />
-            <Moon className={cn('theme-icon', theme === 'light' && 'is-hidden')} />
-          </Button>
-        </div>
 
-        <Button className="ghost" type="button" variant="secondary" onClick={handleClear}>
-          Clear Session
-        </Button>
+          <section className="project-directory" aria-label="项目目录">
+            <div className="section-title">
+              <span>项目</span>
+              <strong>目录</strong>
+            </div>
+            <div className="project-list">
+              {projects.map((project) => (
+                <button
+                  className={cn('project-card', project.id === activeProject?.id && 'active')}
+                  key={project.id}
+                  type="button"
+                  onClick={() => {
+                    void activateProject(project);
+                  }}
+                >
+                  <span className="project-icon">
+                    <FolderOpen />
+                  </span>
+                  <span className="project-copy">
+                    <strong>{project.name}</strong>
+                    <small>{project.path}</small>
+                  </span>
+                </button>
+              ))}
+            </div>
+          </section>
 
-        <div className="status">
-          <span>Status</span>
-          <strong>{status}</strong>
-        </div>
-      </Card>
+          <div className="status">
+            <span>Status</span>
+            <strong>{status}</strong>
+          </div>
+        </Card>
+      </aside>
 
       <Card className="workspace">
+        <header className="workspace-topbar">
+          <div>
+            <p className="eyebrow">Wex Agent</p>
+            <h1>{activeProject?.name ?? '选择项目'}</h1>
+            <p className="workspace-path">{activeProject?.path ?? '点击“新增项目”选择主要工作空间'}</p>
+          </div>
+          <Button className="ghost" type="button" variant="secondary" onClick={handleClear}>
+            Clear Session
+          </Button>
+        </header>
+
         <div className="transcript" ref={scrollRef}>
           {items.map((item) => (
             <article className={`bubble ${item.role} ${item.tone ?? ''}`} key={item.id}>
@@ -212,7 +330,11 @@ export function App() {
           <Textarea
             value={prompt}
             onChange={(event) => setPrompt(event.target.value)}
-            placeholder="Ask the agent to inspect, edit, run commands, or search files..."
+            placeholder={
+              activeProject
+                ? `Ask the agent to work in ${activeProject.name}...`
+                : '新增项目后开始让 agent 检查、编辑或运行命令...'
+            }
             onKeyDown={(event) => {
               if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
                 event.currentTarget.form?.requestSubmit();
