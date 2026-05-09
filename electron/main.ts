@@ -21,6 +21,8 @@ function sendAgentEvent(event: AgentEvent) {
 }
 
 function createWindow() {
+  const isMac = process.platform === 'darwin';
+
   mainWindow = new BrowserWindow({
     width: 1180,
     height: 780,
@@ -28,6 +30,9 @@ function createWindow() {
     minHeight: 620,
     backgroundColor: '#0c0f12',
     title: 'Wex Agent Electron',
+    titleBarStyle: isMac ? 'hidden' : 'default',
+    trafficLightPosition: isMac ? { x: 18, y: 20 } : undefined,
+    frame: !isMac,
     webPreferences: {
       preload: join(__dirname, '../preload/index.mjs'),
       contextIsolation: true,

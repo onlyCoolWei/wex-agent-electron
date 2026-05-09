@@ -41,7 +41,7 @@ export function ContentArea({
 }: ContentAreaProps) {
   return (
     <Card className="bg-card flex min-w-0 flex-1 flex-col gap-0 overflow-hidden rounded-l-xl rounded-r-none border border-none p-0">
-      <header className="flex items-center gap-4 px-5 py-4">
+      <header className="app-drag flex items-center gap-4 px-5 py-4">
         <div className="min-w-0">
           <p className="text-bodySmall text-brand mb-1.5 font-extrabold tracking-widest uppercase">Wex Agent</p>
           <h1 className="text-headlineSmall text-foreground mb-1.5 max-w-none leading-tight tracking-tight">

@@ -1,4 +1,4 @@
-import { FolderOpen, FolderPlus } from 'lucide-react';
+import { FolderOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -21,10 +21,11 @@ export function Sidebar({ projects, activeProject, status, onAddProject, onActiv
           'bg-sidebar text-sidebar-foreground flex-1 gap-5 rounded-none border-0 p-4 shadow-none',
         )}
       >
+        <div className="app-drag flex h-8 items-center gap-2 pl-[68px]" aria-label="工具条">
+          {/* 原生红黄绿由主进程通过 trafficLightPosition 叠在此区域左侧；这里继续追加按钮即可 */}
+        </div>
+
         <div className="flex gap-2">
-          <Button aria-label="新增项目" size="icon-sm" type="button" variant="secondary" onClick={onAddProject}>
-            <FolderPlus />
-          </Button>
           <Button className="flex-1 justify-start" type="button" variant="secondary" onClick={onAddProject}>
             新增项目
           </Button>
@@ -33,7 +34,6 @@ export function Sidebar({ projects, activeProject, status, onAddProject, onActiv
         <section className="grid min-h-0 gap-3" aria-label="项目目录">
           <div className="text-bodySmall text-muted-foreground flex items-baseline justify-between tracking-widest">
             <span className="uppercase">项目</span>
-            <strong className="text-bodyMedium text-foreground">目录</strong>
           </div>
           <div className="grid gap-2 overflow-auto">
             {projects.map((project) => (
