@@ -48,6 +48,20 @@ export const zhCN = {
     zhCN: '中文',
     enUS: 'EN',
   },
+  settings: {
+    label: '设置',
+    theme: {
+      label: '主题模式',
+      light: '白天模式',
+      dark: '黑夜模式',
+      system: '跟随系统',
+    },
+    language: {
+      label: '语言切换',
+      zhCN: '简体中文',
+      enUS: '英文',
+    },
+  },
 } as const;
 
 type WidenLocale<T> = {

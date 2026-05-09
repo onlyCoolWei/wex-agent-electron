@@ -29,3 +29,9 @@
 - 🧹 精简 renderer 组件样式：移除过度抽象的共享 class 文件，改为在组件内直接使用 token 类
 - 🪟 改用原生红黄绿并外置：移除自绘窗口控制与相关 IPC，改为 `titleBarStyle: hidden` + `trafficLightPosition` 把原生按钮定位到 sidebar 顶部工具条，左侧预留位置，右侧可继续追加功能按钮
 - 🌐 接入国际化基础设施：新增中英文语言包、`useTranslation()` Hook、Zustand 持久化语言偏好与侧边栏语言切换组件
+
+### 2026-05-10
+
+- 📝 新增国际化实现技术文档：说明语言状态、类型化字典、翻译插值、组件接入与扩展约定
+- ⚙️ 完善侧边栏底部设置菜单：支持主题模式与语言切换的悬浮二级菜单，补充跟随系统主题，并统一使用 shadcn/ui Button 与 Select 封装
+- 🐛 优化设置菜单交互反馈：改用非 portal 选项列表避免 hover 阻断，并使用 popover/accent 语义色增强一级菜单悬浮与选中态

@@ -50,4 +50,18 @@ export const enUS = {
     zhCN: '中文',
     enUS: 'EN',
   },
+  settings: {
+    label: 'Settings',
+    theme: {
+      label: 'Theme mode',
+      light: 'Light mode',
+      dark: 'Dark mode',
+      system: 'Use system setting',
+    },
+    language: {
+      label: 'Language',
+      zhCN: 'Simplified Chinese',
+      enUS: 'English',
+    },
+  },
 } as const satisfies LocaleDictionary;
