@@ -1,6 +1,8 @@
-import { FolderOpen } from 'lucide-react';
+import { FolderOpen, Plus } from 'lucide-react';
+import { LanguageToggle } from '@/components/language-toggle';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { useTranslation } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import type { ProjectItem } from '../types';
 
@@ -13,27 +15,39 @@ type SidebarProps = {
 };
 
 export function Sidebar({ projects, activeProject, status, onAddProject, onActivateProject }: SidebarProps) {
+  const { t } = useTranslation();
+
   return (
-    <aside className="bg-sidebar flex w-72 shrink-0 flex-col" aria-label="侧边栏">
+    <aside className="bg-sidebar flex w-72 shrink-0 flex-col" aria-label={t('sidebar.ariaLabel')}>
       <Card
         className={cn(
           'border-border bg-card border',
           'bg-sidebar text-sidebar-foreground flex-1 gap-5 rounded-none border-0 p-4 shadow-none',
         )}
       >
-        <div className="app-drag flex h-8 items-center gap-2 pl-[68px]" aria-label="工具条">
+        <div
+          className="app-drag flex h-8 items-center justify-start gap-2 pl-[68px]"
+          aria-label={t('sidebar.toolbarLabel')}
+        >
           {/* 原生红黄绿由主进程通过 trafficLightPosition 叠在此区域左侧；这里继续追加按钮即可 */}
+          <LanguageToggle />
         </div>
 
         <div className="flex gap-2">
-          <Button className="flex-1 justify-start" type="button" variant="secondary" onClick={onAddProject}>
-            新增项目
+          <Button
+            className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex-1 justify-start rounded-xl"
+            type="button"
+            variant="ghost"
+            onClick={onAddProject}
+          >
+            <Plus className="size-4" />
+            {t('sidebar.addProject')}
           </Button>
         </div>
 
-        <section className="grid min-h-0 gap-3" aria-label="项目目录">
+        <section className="grid min-h-0 gap-3" aria-label={t('sidebar.projects')}>
           <div className="text-bodySmall text-muted-foreground flex items-baseline justify-between tracking-widest">
-            <span className="uppercase">项目</span>
+            <span className="uppercase">{t('sidebar.projects')}</span>
           </div>
           <div className="grid gap-2 overflow-auto">
             {projects.map((project) => (
@@ -65,7 +79,7 @@ export function Sidebar({ projects, activeProject, status, onAddProject, onActiv
         </section>
 
         <div className="bg-muted border-border mt-auto grid gap-1.5 rounded-2xl border p-4">
-          <span className="text-bodySmall text-brand font-black tracking-widest uppercase">Status</span>
+          <span className="text-bodySmall text-brand font-black tracking-widest uppercase">{t('sidebar.status')}</span>
           <strong className="text-bodySmall text-foreground leading-relaxed">{status}</strong>
         </div>
       </Card>

@@ -1,4 +1,5 @@
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from '@/lib/i18n';
 import type { AgentEvent } from '../shared/ipc';
 import { ContentArea } from './components/ContentArea';
 import { Sidebar } from './components/Sidebar';
@@ -18,16 +19,17 @@ function formatToolInput(input: Record<string, unknown>) {
 }
 
 export function App() {
+  const { t } = useTranslation();
   const [prompt, setPrompt] = useState('');
   const [isRunning, setIsRunning] = useState(false);
-  const [status, setStatus] = useState('Ready');
+  const [status, setStatus] = useState(() => t('app.status.ready'));
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const [items, setItems] = useState<ChatItem[]>([
     {
       id: createId(),
       role: 'system',
-      text: 'Wex Agent Electron is ready. The agent core runs in Electron main process with the same loop, DeepSeek streaming call, and tools as wex-agent.',
+      text: t('app.messages.ready'),
       tone: 'muted',
     },
   ]);
@@ -49,7 +51,7 @@ export function App() {
   const handleAgentEvent = useCallback(
     (event: AgentEvent) => {
       if (event.type === 'turn') {
-        setStatus(`Thinking, turn ${event.turn}`);
+        setStatus(t('app.status.thinking', { turn: event.turn }));
         return;
       }
       if (event.type === 'text') {
@@ -60,7 +62,7 @@ export function App() {
         appendItem({
           id: createId(),
           role: 'tool',
-          text: `Running ${event.name} ${formatToolInput(event.input)}`,
+          text: t('app.messages.runningTool', { name: event.name, input: formatToolInput(event.input) }),
           tone: 'muted',
         });
         return;
@@ -75,7 +77,7 @@ export function App() {
         return;
       }
       if (event.type === 'error') {
-        setStatus('Error');
+        setStatus(t('app.status.error'));
         appendItem({
           id: createId(),
           role: 'system',
@@ -86,13 +88,18 @@ export function App() {
       }
       if (event.type === 'done') {
         setStatus(
-          `Done: ${event.result.reason}, ${event.result.state.turnCount} turns, ${event.result.state.totalInputTokens}+${event.result.state.totalOutputTokens} tokens`,
+          t('app.status.done', {
+            reason: event.result.reason,
+            turns: event.result.state.turnCount,
+            inputTokens: event.result.state.totalInputTokens,
+            outputTokens: event.result.state.totalOutputTokens,
+          }),
         );
         setIsRunning(false);
         activeAssistantId.current = null;
       }
     },
-    [appendAssistantText, appendItem],
+    [appendAssistantText, appendItem, t],
   );
 
   const resetConversation = useCallback((text: string) => {
@@ -124,7 +131,7 @@ export function App() {
 
         setProjects((prev) => (prev.length > 0 ? prev : [defaultProject]));
         setActiveProjectId((prev) => prev ?? defaultProject.id);
-        setStatus(`Workspace: ${defaultProject.name}`);
+        setStatus(t('app.status.workspace', { name: defaultProject.name }));
       })
       .catch((err) => {
         if (!isMounted) return;
@@ -140,7 +147,7 @@ export function App() {
     return () => {
       isMounted = false;
     };
-  }, [appendItem]);
+  }, [appendItem, t]);
 
   useEffect(() => {
     return window.wexAgent.onAgentEvent((event) => {
@@ -164,7 +171,7 @@ export function App() {
     activeAssistantId.current = assistantId;
     setPrompt('');
     setIsRunning(true);
-    setStatus('Starting agent loop');
+    setStatus(t('app.status.starting'));
     setItems((prev) => [
       ...prev,
       { id: createId(), role: 'user', text: trimmed },
@@ -193,8 +200,8 @@ export function App() {
 
     setActiveProjectId(project.id);
     await window.wexAgent.clearSession();
-    setStatus(`Workspace: ${project.name}`);
-    resetConversation(`Opened ${project.name}. The agent will use ${project.path} as its working directory.`);
+    setStatus(t('app.status.workspace', { name: project.name }));
+    resetConversation(t('app.messages.opened', { name: project.name, path: project.path }));
   }
 
   async function handleAddProject() {
@@ -211,8 +218,8 @@ export function App() {
       setProjects((prev) => (prev.some((item) => item.path === project.path) ? prev : [...prev, project]));
       setActiveProjectId(project.id);
       await window.wexAgent.clearSession();
-      setStatus(`Workspace: ${project.name}`);
-      resetConversation(`Opened ${project.name}. The agent will use ${project.path} as its working directory.`);
+      setStatus(t('app.status.workspace', { name: project.name }));
+      resetConversation(t('app.messages.opened', { name: project.name, path: project.path }));
     } catch (err) {
       appendItem({
         id: createId(),
@@ -225,11 +232,11 @@ export function App() {
 
   async function handleClear() {
     await window.wexAgent.clearSession();
-    setStatus('Session cleared');
+    setStatus(t('app.status.cleared'));
     resetConversation(
       activeProject
-        ? `Session cleared. The next prompt will run in ${activeProject.path}.`
-        : 'Session cleared. The next prompt starts a fresh message history.',
+        ? t('app.messages.sessionClearedProject', { path: activeProject.path })
+        : t('app.messages.sessionClearedFresh'),
     );
   }
 

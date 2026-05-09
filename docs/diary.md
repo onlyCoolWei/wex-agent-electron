@@ -28,3 +28,4 @@
 - 🎨 收敛 renderer 样式：移除复杂渐变、混色与透明 arbitrary color，统一使用 design token 语义类
 - 🧹 精简 renderer 组件样式：移除过度抽象的共享 class 文件，改为在组件内直接使用 token 类
 - 🪟 改用原生红黄绿并外置：移除自绘窗口控制与相关 IPC，改为 `titleBarStyle: hidden` + `trafficLightPosition` 把原生按钮定位到 sidebar 顶部工具条，左侧预留位置，右侧可继续追加功能按钮
+- 🌐 接入国际化基础设施：新增中英文语言包、`useTranslation()` Hook、Zustand 持久化语言偏好与侧边栏语言切换组件

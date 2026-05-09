@@ -3,8 +3,16 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
+import { useTranslation } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import type { ChatItem, ProjectItem } from '../types';
+
+const roleLabelKeys = {
+  user: 'app.roles.user',
+  assistant: 'app.roles.assistant',
+  tool: 'app.roles.tool',
+  system: 'app.roles.system',
+} as const;
 
 type ContentAreaProps = {
   activeProject: ProjectItem | null;
@@ -39,20 +47,22 @@ export function ContentArea({
   onClear,
   onSubmit,
 }: ContentAreaProps) {
+  const { t } = useTranslation();
+
   return (
     <Card className="bg-card flex min-w-0 flex-1 flex-col gap-0 overflow-hidden rounded-l-xl rounded-r-none border border-none p-0">
       <header className="app-drag flex items-center gap-4 px-5 py-4">
         <div className="min-w-0">
-          <p className="text-bodySmall text-brand mb-1.5 font-extrabold tracking-widest uppercase">Wex Agent</p>
+          <p className="text-bodySmall text-brand mb-1.5 font-extrabold tracking-widest uppercase">{t('app.brand')}</p>
           <h1 className="text-headlineSmall text-foreground mb-1.5 max-w-none leading-tight tracking-tight">
-            {activeProject?.name ?? '选择项目'}
+            {activeProject?.name ?? t('content.emptyProjectTitle')}
           </h1>
           <p className="text-bodySmall text-muted-foreground block overflow-hidden text-ellipsis whitespace-nowrap">
-            {activeProject?.path ?? '点击“新增项目”选择主要工作空间'}
+            {activeProject?.path ?? t('content.emptyProjectPath')}
           </p>
         </div>
         <Button type="button" variant="secondary" onClick={onClear}>
-          Clear Session
+          {t('content.clearSession')}
         </Button>
       </header>
 
@@ -63,10 +73,10 @@ export function ContentArea({
               className="text-bodySmall text-secondary-foreground mb-2 font-black tracking-widest uppercase"
               variant={item.tone === 'error' ? 'destructive' : 'secondary'}
             >
-              {item.role}
+              {t(roleLabelKeys[item.role])}
             </Badge>
             <p className="m-0 leading-relaxed wrap-anywhere whitespace-pre-wrap">
-              {item.text || (item.role === 'assistant' ? '...' : '')}
+              {item.text || (item.role === 'assistant' ? t('content.assistantPending') : '')}
             </p>
           </article>
         ))}
@@ -78,9 +88,7 @@ export function ContentArea({
           value={prompt}
           onChange={(event) => onPromptChange(event.target.value)}
           placeholder={
-            activeProject
-              ? `Ask the agent to work in ${activeProject.name}...`
-              : '新增项目后开始让 agent 检查、编辑或运行命令...'
+            activeProject ? t('content.promptActive', { name: activeProject.name }) : t('content.promptEmpty')
           }
           onKeyDown={(event) => {
             if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
@@ -89,7 +97,7 @@ export function ContentArea({
           }}
         />
         <Button className="min-h-24 w-28 rounded-xl font-black" disabled={isRunning || !prompt.trim()} type="submit">
-          {isRunning ? 'Running' : 'Send'}
+          {isRunning ? t('content.running') : t('content.send')}
         </Button>
       </form>
     </Card>
