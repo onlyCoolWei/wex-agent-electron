@@ -1,24 +1,8 @@
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
-import { FolderOpen, FolderPlus } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
 import type { AgentEvent } from '../shared/ipc';
-
-type ChatItem = {
-  id: string;
-  role: 'user' | 'assistant' | 'tool' | 'system';
-  text: string;
-  tone?: 'error' | 'muted';
-};
-
-type ProjectItem = {
-  id: string;
-  name: string;
-  path: string;
-};
+import { ContentArea } from './components/ContentArea';
+import { Sidebar } from './components/Sidebar';
+import type { ChatItem, ProjectItem } from './types';
 
 function createId() {
   return globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
@@ -250,102 +234,30 @@ export function App() {
   }
 
   return (
-    <main className="shell">
-      <aside className="app-sidebar" aria-label="侧边栏">
-        <Card className="sidebar project-sidebar">
-          <div className="project-header">
-            <Button
-              aria-label="新增项目"
-              className="add-project"
-              size="icon-sm"
-              type="button"
-              variant="secondary"
-              onClick={handleAddProject}
-            >
-              <FolderPlus />
-            </Button>
-            <Button className="new-project-button" type="button" variant="secondary" onClick={handleAddProject}>
-              新增项目
-            </Button>
-          </div>
-
-          <section className="project-directory" aria-label="项目目录">
-            <div className="section-title">
-              <span>项目</span>
-              <strong>目录</strong>
-            </div>
-            <div className="project-list">
-              {projects.map((project) => (
-                <button
-                  className={cn('project-card', project.id === activeProject?.id && 'active')}
-                  key={project.id}
-                  type="button"
-                  onClick={() => {
-                    void activateProject(project);
-                  }}
-                >
-                  <span className="project-icon">
-                    <FolderOpen />
-                  </span>
-                  <span className="project-copy">
-                    <strong>{project.name}</strong>
-                    <small>{project.path}</small>
-                  </span>
-                </button>
-              ))}
-            </div>
-          </section>
-
-          <div className="status">
-            <span>Status</span>
-            <strong>{status}</strong>
-          </div>
-        </Card>
-      </aside>
-
-      <Card className="workspace">
-        <header className="workspace-topbar">
-          <div>
-            <p className="eyebrow">Wex Agent</p>
-            <h1>{activeProject?.name ?? '选择项目'}</h1>
-            <p className="workspace-path">{activeProject?.path ?? '点击“新增项目”选择主要工作空间'}</p>
-          </div>
-          <Button className="ghost" type="button" variant="secondary" onClick={handleClear}>
-            Clear Session
-          </Button>
-        </header>
-
-        <div className="transcript" ref={scrollRef}>
-          {items.map((item) => (
-            <article className={`bubble ${item.role} ${item.tone ?? ''}`} key={item.id}>
-              <Badge className="role" variant={item.tone === 'error' ? 'destructive' : 'secondary'}>
-                {item.role}
-              </Badge>
-              <p>{item.text || (item.role === 'assistant' ? '...' : '')}</p>
-            </article>
-          ))}
-        </div>
-
-        <form className="composer" onSubmit={handleSubmit}>
-          <Textarea
-            value={prompt}
-            onChange={(event) => setPrompt(event.target.value)}
-            placeholder={
-              activeProject
-                ? `Ask the agent to work in ${activeProject.name}...`
-                : '新增项目后开始让 agent 检查、编辑或运行命令...'
-            }
-            onKeyDown={(event) => {
-              if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
-                event.currentTarget.form?.requestSubmit();
-              }
-            }}
-          />
-          <Button className="send-button" disabled={isRunning || !prompt.trim()} type="submit">
-            {isRunning ? 'Running' : 'Send'}
-          </Button>
-        </form>
-      </Card>
+    <main className="bg-background text-foreground flex h-screen">
+      <Sidebar
+        activeProject={activeProject}
+        projects={projects}
+        status={status}
+        onActivateProject={(project) => {
+          void activateProject(project);
+        }}
+        onAddProject={() => {
+          void handleAddProject();
+        }}
+      />
+      <ContentArea
+        activeProject={activeProject}
+        isRunning={isRunning}
+        items={items}
+        prompt={prompt}
+        scrollRef={scrollRef}
+        onClear={() => {
+          void handleClear();
+        }}
+        onPromptChange={setPrompt}
+        onSubmit={handleSubmit}
+      />
     </main>
   );
 }
