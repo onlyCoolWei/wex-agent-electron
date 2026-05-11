@@ -7,6 +7,7 @@ directories:
 
 files:
   - out/**/*
+  - build/icon.png
   - package.json
   - '!node_modules/@tailwindcss/**'
   - '!node_modules/tailwindcss/**'
@@ -19,6 +20,7 @@ artifactName: ${productName}-${version}-${os}-${arch}.${ext}
 
 mac:
   category: public.app-category.developer-tools
+  icon: build/icon.icns
   identity: null
   target:
     - target: dmg
@@ -31,6 +33,7 @@ mac:
         - arm64
 
 win:
+  icon: build/icon.ico
   target:
     - target: nsis
       arch:

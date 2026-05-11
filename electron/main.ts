@@ -33,6 +33,7 @@ function createWindow() {
     titleBarStyle: isMac ? 'hidden' : 'default',
     trafficLightPosition: isMac ? { x: 18, y: 20 } : undefined,
     frame: !isMac,
+    icon: join(__dirname, '../../build/icon.png'),
     webPreferences: {
       preload: join(__dirname, '../preload/index.mjs'),
       contextIsolation: true,
