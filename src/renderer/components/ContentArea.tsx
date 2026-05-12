@@ -83,7 +83,7 @@ export function ContentArea({
       </div>
 
       <form className="bg-card px-5 pb-5" onSubmit={onSubmit}>
-        <div className="bg-popover ring-border/80 focus-within:ring-ring/70 mx-auto flex min-h-28 w-full max-w-4xl flex-col rounded-[1.75rem] p-4 shadow-2xl ring-1 transition-[box-shadow,ring-color] focus-within:shadow-xl focus-within:ring-2">
+        <div className="bg-popover ring-border/80 focus-within:ring-ring/70 mx-auto flex min-h-28 w-full max-w-4xl flex-col rounded-xl p-4 shadow-2xl ring-1 transition-[box-shadow,ring-color] focus-within:shadow-xl focus-within:ring-2">
           <Textarea
             className="text-bodyMedium text-foreground placeholder:text-text-placeholder max-h-48 min-h-14 flex-1 resize-none border-0 bg-transparent px-0 pt-0 pb-3 shadow-none focus-visible:ring-0 dark:bg-transparent"
             value={prompt}

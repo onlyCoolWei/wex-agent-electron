@@ -241,7 +241,7 @@ export function App() {
   }
 
   return (
-    <main className="bg-background text-foreground flex h-screen">
+    <main className="text-foreground flex h-screen">
       <Sidebar
         activeProject={activeProject}
         projects={projects}
